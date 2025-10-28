@@ -86,7 +86,7 @@ public class Main {
         Predicate<Integer> greaterThan3 = n -> n > 3;
 
         List<Integer> filteredNums = new ArrayList<>();
-        for (int n : nums) {
+        for (Integer n : nums) {
             if (even.and(greaterThan3).test(n)) filteredNums.add(n);
         }
         System.out.println("Числа, які парні і більші за 3: " + filteredNums + "\n");
@@ -97,7 +97,7 @@ public class Main {
         Consumer<Student> printStudent = s ->
                 System.out.println("Студент: " + s.getName() + " (" + s.getGroup() + ")");
         System.out.println("Список студентів:");
-        for (Student s : students) printStudent.accept(s);
+        Arrays.stream(students).forEach(printStudent);
         System.out.println();
 
 
@@ -105,18 +105,27 @@ public class Main {
         System.out.println("=== Завдання 5: Predicate + Consumer ===");
         Predicate<Integer> greaterThan5 = n -> n > 5;
         Consumer<Integer> printIfTrue = n -> System.out.println("Число " + n + " > 5");
-        for (int n : nums) {
-            if (greaterThan5.test(n)) printIfTrue.accept(n);
-        }
+
+        // використовуємо stream і boxed() для конвертації int → Integer
+        int[] primitiveNums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        Arrays.stream(primitiveNums)
+                .boxed()
+                .filter(greaterThan5)
+                .forEach(printIfTrue);
         System.out.println();
 
 
         // ---------- Завдання 6 ----------
         System.out.println("=== Завдання 6: Function 2^n ===");
         Function<Integer, Integer> powerOfTwo = n -> (int) Math.pow(2, n);
-        int[] values = {0, 1, 2, 3, 4, 5, 6};
-        int[] powers = Arrays.stream(values).map(powerOfTwo::apply).toArray();
-        System.out.println("2^n для кожного елемента: " + Arrays.toString(powers));
+
+        int[] base = {0, 1, 2, 3, 4, 5, 6};
+        List<Integer> powers = Arrays.stream(base)
+                .boxed()
+                .map(powerOfTwo)
+                .toList();
+
+        System.out.println("2^n для кожного елемента: " + powers);
         System.out.println();
 
 
@@ -137,11 +146,13 @@ public class Main {
         };
 
         int[] digits = {0,1,2,3,4,5,6,7,8,9};
-        String[] words = Arrays.stream(digits)
-                .mapToObj(toWord::apply)
-                .toArray(String[]::new);
+        List<String> words = Arrays.stream(digits)
+                .boxed()
+                .map(toWord)
+                .toList();
 
         System.out.println("Перетворення чисел у слова:");
-        System.out.println(Arrays.toString(words));
+        System.out.println(words);
     }
 }
+
